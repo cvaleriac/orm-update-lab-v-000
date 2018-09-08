@@ -4,10 +4,13 @@ class Student
   attr_accessor :name, :grade
   attr_reader :id
 
+  @all = []
+
 def initialize(name, grade, id = nil)
   @name = name
   @grade = grade
   @id = id
+  @all << self
 end
 
 def self.create_table
@@ -49,11 +52,11 @@ def self.create(name, grade)
 end
 
 def self.new_from_db(row)
-    student = self.new
-    student.id = row[0]
-    student.name =  row[1]
-    student.grade = row[2]
-    student
+    new_student = self.new
+    new_student.id = row[0]
+    new_student.name =  row[1]
+    new_student.grade = row[2]
+    new_student
   end
 
   def self.find_by_name(name)
