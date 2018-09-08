@@ -1,12 +1,12 @@
 require_relative "../config/environment.rb"
 
 class Student
-  attr_accessor :name, :grade, :id
+  attr_accessor :id, :name, :grade
 
-def initialize(name, grade, id = nil)
+def initialize(id = nil, name, grade)
+  @id = id
   @name = name
   @grade = grade
-  @id = id
 end
 
 def self.create_table
@@ -42,34 +42,24 @@ def self.create_table
 end
 
 def self.create(name:, grade:)
-  student = Student.new(name, grade)
-   student.save
-   student
+student = Student.new(name, grade)
+student.save
+student
 end
-
 def self.new_from_db(row)
-  id = row[0]
-  name = row[1]
-  grade = row[2]
-  self.new(id, name, grade)
+id = row[0]
+name = row[1]
+grade = row[2]
+self.new(id, name, grade)
+end 
+def self.find_by_name(name)
+sql = "SELECT * FROM students WHERE name = ?"
+DB[:conn].execute(sql, name).map { |row| new_from_db(row) }.first
 end
-
-  def self.find_by_name(name)
-    sql = "SELECT * FROM students WHERE name = ? LIMIT 1"
-  result = DB[:conn].execute(sql, name)[0]
-  Student.new(result[0], result[1], result[2])
-  end
-
-  def update
-    sql = "UPDATE students SET name = ?, grade = ? WHERE id = ?"
-    DB[:conn].execute(sql, self.name, self.grade, self.id)
-  end
-
-
-
-
-  # Remember, you can access your database connection anywhere in this class
-  #  with DB[:conn]
+def update
+sql = "UPDATE students SET name = ?, grade = ? WHERE id = ?"
+DB[:conn].execute(sql, self.name, self.grade, self.id)
+end
 
 
 end
